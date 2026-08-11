@@ -1,0 +1,164 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String       @id @default(uuid())
+  name          String
+  email         String       @unique
+  password_hash String
+  role          String       @default("INSPETOR") // ADMIN, GESTOR, INSPETOR
+  active        Boolean      @default(true)
+  created_at    DateTime     @default(now())
+  updated_at    DateTime     @updatedAt
+  inspections   Inspection[]
+
+  @@map("users")
+}
+
+model Client {
+  id          String       @id @default(uuid())
+  name        String
+  phone       String
+  email       String?
+  document    String?      // CPF ou CNPJ
+  active      Boolean      @default(true)
+  created_at  DateTime     @default(now())
+  updated_at  DateTime     @updatedAt
+  vehicles    Vehicle[]
+  inspections Inspection[]
+
+  @@map("clients")
+}
+
+model Vehicle {
+  id          String       @id @default(uuid())
+  client_id   String?
+  client      Client?      @relation(fields: [client_id], references: [id], onDelete: SetNull)
+  plate       String       @unique
+  model       String
+  brand       String?
+  year_model  String
+  color       String
+  km          Int          @default(0)
+  chassis     String?
+  renavam     String?
+  fuel_type   String?
+  created_at  DateTime     @default(now())
+  updated_at  DateTime     @updatedAt
+  inspections Inspection[]
+
+  @@map("vehicles")
+}
+
+model ChecklistItemTemplate {
+  id         String   @id @default(uuid())
+  category   String   // INTERNO, FRENTE_LATERAIS, TRASEIRA, TAMPAS_FLUIDOS_OUTROS, ESTATICO, RODAGEM
+  name       String
+  order      Int      @default(0)
+  active     Boolean  @default(true)
+  created_at DateTime @default(now())
+
+  @@map("checklist_item_templates")
+}
+
+model Inspection {
+  id                        String             @id @default(uuid())
+  os_number                 String             @unique
+  client_id                 String
+  client                    Client             @relation(fields: [client_id], references: [id], onDelete: Cascade)
+  vehicle_id                String
+  vehicle                   Vehicle            @relation(fields: [vehicle_id], references: [id], onDelete: Cascade)
+  inspector_id              String?
+  inspector                 User?              @relation(fields: [inspector_id], references: [id], onDelete: SetNull)
+  consultant_name           String
+  is_driver_the_scheduler   Boolean            @default(true)
+  status                    String             @default("EM_ANDAMENTO") // EM_ANDAMENTO, FINALIZADO, RETIRADO, CANCELADO
+  
+  // Condições e Combustível
+  fuel_level                Float              @default(0.5) // 0, 0.25, 0.5, 0.75, 1.0
+  battery_lev_percent       Int?               // 0 a 100
+  test_drive_needed         Boolean            @default(false)
+  protective_covers_placed  Boolean            @default(false)
+  warranty_manual_requested Boolean            @default(false)
+  has_bed                   Boolean            @default(false)
+  has_marine_cover          Boolean            @default(false)
+  belongings                String?            // JSON string com itens selecionados e notas
+  bodywork_notes            String?
+  tires_notes               String?
+  
+  // Assinaturas e Entrada/Saída
+  entry_signature           String?            // Base64 da assinatura
+  entry_date                String?
+  entry_time                String?
+  exit_signature            String?            // Base64 da assinatura
+  exit_date                 String?
+  exit_time                 String?
+  terms_accepted            Boolean            @default(true)
+  
+  created_at                DateTime           @default(now())
+  updated_at                DateTime           @updatedAt
+
+  answers                   InspectionAnswer[]
+  damage_markings           DamageMarking[]
+  tire_wheel_statuses       TireWheelStatus[]
+  photos                    InspectionPhoto[]
+
+  @@map("inspections")
+}
+
+model InspectionAnswer {
+  id            String     @id @default(uuid())
+  inspection_id String
+  inspection    Inspection @relation(fields: [inspection_id], references: [id], onDelete: Cascade)
+  category      String
+  item_name     String
+  status        String     @default("S") // S, N, A, I
+  observation   String?
+  created_at    DateTime   @default(now())
+
+  @@map("inspection_answers")
+}
+
+model TireWheelStatus {
+  id            String        @id @default(uuid())
+  inspection_id String
+  inspection    Inspection    @relation(fields: [inspection_id], references: [id], onDelete: Cascade)
+  position      String        // DIANTEIRO_D, DIANTEIRO_E, TRASEIRO_D, TRASEIRO_E
+  type          String        // PNEU, CALOTA, RODA_LIGA_LEVE
+  status        String        @default("OK") // OK, AVARIADO, DESGASTADO, NAO_POSSUI
+  notes         String?
+
+  @@map("tire_wheel_statuses")
+}
+
+model DamageMarking {
+  id            String      @id @default(uuid())
+  inspection_id String
+  inspection    Inspection  @relation(fields: [inspection_id], references: [id], onDelete: Cascade)
+  view_type     String      // SUPERIOR_TETO, LATERAL_ESQUERDA, LATERAL_DIREITA, FRONTAL, TRASEIRA
+  damage_type   String      // A, R, X, F
+  coord_x       Float       // Porcentagem 0 a 100
+  coord_y       Float       // Porcentagem 0 a 100
+  notes         String?
+  created_at    DateTime    @default(now())
+
+  @@map("damage_markings")
+}
+
+model InspectionPhoto {
+  id            String     @id @default(uuid())
+  inspection_id String
+  inspection    Inspection @relation(fields: [inspection_id], references: [id], onDelete: Cascade)
+  category      String     @default("GERAL") // CARROCERIA, MOTOR, INTERIOR, AVARIA, etc.
+  file_url      String
+  description   String?
+  created_at    DateTime   @default(now())
+
+  @@map("inspection_photos")
+}
