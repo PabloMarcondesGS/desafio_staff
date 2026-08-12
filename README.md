@@ -136,7 +136,10 @@ npm run test:coverage
 -- Teste de fluxo, 4 horas 
 -- Melhorias gerais, 4 horas
 -- Documentação e revisões, 4 horas
+-- Testes unitarios, 1 hora
+-- Revisão dos testes, 1 hora
 
 ## Implementações
 -- Docker não foi implementado devido a não necessidade das tecnologias escolhidas, o docker so seria necessario caso houvesse um back end muito mais robusto e focado em escalabilidade, e um projeto desse tamanho mesmo com 1000 usuarios nao teria problemas
--- Testes end to end não foram implementados pois haveria uma necessidade de maior entendimento da finalidade geral do projeto. 
+-- Testes end to end não foram implementados pois haveria uma necessidade de maior entendimento da finalidade geral do projeto.
+-- Foram adicionados testes automatizados para demonstrar o conhecimento em testes.
