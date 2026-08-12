@@ -105,3 +105,38 @@ Abra seu navegador em: **`http://localhost:3000`**
 | **Inspetor** | `inspetor@fixcar.com` | `inspetor123` | Operacional: execução de vistorias, registro de avarias, laudos e fotos |
 
 Para facilitar foram adicionados botoes que preenchem os logins puramente para facilitar os testes.
+
+---
+
+## 🧪 Execução dos Testes Unitários
+
+O projeto conta com suíte de testes unitários automatizados com **Jest** e **React Testing Library**:
+
+```bash
+# Executar todos os testes unitários
+npm test
+
+# Executar testes em modo observador (watch mode)
+npm run test:watch
+
+# Gerar relatório detalhado de cobertura de código (coverage)
+npm run test:coverage
+```
+
+### 📋 Cobertura dos Testes:
+- 🔒 **Autenticação & Criptografia**: Hash bcrypt, verificação de credenciais, assinatura e decodificação JWT, expiração e extração de Bearer token.
+- 🛠️ **Validações & Formatadores**: Validador estrito de data brasileira `DD/MM/AAAA` (com anos bissextos), horários `HH:MM`, máscaras dinâmicas e sanitização de categorias.
+- ⛽ **Componentes React**: Medidor analógico de combustível e bateria LEV (`FuelGauge`), alertas e feedbacks visuais (`FeedbackToast`).
+- 📢 **Tratamento de Erros**: Padronização de mensagens de erro HTTP e criadores de feedback.
+
+## Tempo total de desenvolvimento 
+-- Analise da documentação e entendimento do produto, 3 horas
+-- Casca do projeto, cerca de 1 hora
+-- Funcionalidades, cerca de 1 dia
+-- Teste de fluxo, 4 horas 
+-- Melhorias gerais, 4 horas
+-- Documentação e revisões, 4 horas
+
+## Implementações
+-- Docker não foi implementado devido a não necessidade das tecnologias escolhidas, o docker so seria necessario caso houvesse um back end muito mais robusto e focado em escalabilidade, e um projeto desse tamanho mesmo com 1000 usuarios nao teria problemas
+-- Testes end to end não foram implementados pois haveria uma necessidade de maior entendimento da finalidade geral do projeto. 
