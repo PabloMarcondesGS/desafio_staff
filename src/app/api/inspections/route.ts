@@ -149,8 +149,8 @@ export async function POST(request: Request) {
             inspection_id: newInspection.id,
             view_type: d.view_type || 'TOP',
             damage_type: d.damage_type || 'A',
-            x_percent: Number(d.x_percent),
-            y_percent: Number(d.y_percent),
+            coord_x: Number(d.coord_x ?? d.x_percent ?? 0),
+            coord_y: Number(d.coord_y ?? d.y_percent ?? 0),
             notes: d.notes || null,
           })),
         });
