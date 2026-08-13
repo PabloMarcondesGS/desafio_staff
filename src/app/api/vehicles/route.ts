@@ -77,7 +77,23 @@ export async function POST(request: Request) {
       );
     }
 
-    // 2. Criação do registro de veículo
+    // 2. Verificar se o veículo com esta placa já existe para evitar erro de restrição única
+    const existingVehicle = await prisma.vehicle.findUnique({
+      where: { plate: data.plate.toUpperCase().trim() },
+    });
+
+    if (existingVehicle) {
+      // Se já existe, atualiza o cliente vinculado (se aplicável) e retorna o veículo existente
+      const updatedVehicle = await prisma.vehicle.update({
+        where: { id: existingVehicle.id },
+        data: {
+          client_id: data.client_id || existingVehicle.client_id,
+        },
+      });
+      return NextResponse.json(updatedVehicle, { status: 200 });
+    }
+
+    // 3. Criação do registro de novo veículo
     const vehicle = await prisma.vehicle.create({
       data: {
         plate: data.plate.toUpperCase().trim(),
