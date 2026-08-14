@@ -23,12 +23,26 @@ body {
     font-size: 11px !important;
   }
 
-  .no-print {
+  /* Ocultar elementos desnecessários da aplicação web */
+  .no-print, aside, header {
     display: none !important;
   }
 
   .print-only {
     display: block !important;
+  }
+
+  /* Desfazer o container flex de tela cheia para a impressão fluir livremente */
+  .flex.h-screen {
+    height: auto !important;
+    overflow: visible !important;
+    display: block !important;
+  }
+
+  main {
+    padding: 0 !important;
+    background: transparent !important;
+    overflow: visible !important;
   }
 
   .print-page {
@@ -37,6 +51,6 @@ body {
     width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
-    page-break-after: always;
+    page-break-inside: avoid;
   }
 }
